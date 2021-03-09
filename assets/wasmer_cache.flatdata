@@ -1,0 +1,48 @@
+namespace wasmer_cache {
+    enum TrapCode:u32 : 4 {
+        StackOverflow = 0,
+        HeapSetterOutOfBounds = 1,
+        HeapAccessOutOfBounds = 2,
+        HeapMisaligned = 3,
+        TableSetterOutOfBounds = 4,
+        TableAccessOutOfBounds = 5,
+        OutOfBounds = 6,
+        IndirectCallToNull = 7,
+        BadSignature = 8,
+        IntegerOverflow = 9,
+        IntegerDivisionByZero = 10,
+        BadConversionToInteger = 11,
+        UnreachableCodeReached = 12,
+        Interrupt = 13,
+        UnalignedAtomic = 14,
+        VMOutOfMemory = 15,
+    }
+
+    struct TrapInformation {
+        code_offset: u32 : 32;
+        trap_code: TrapCode : 4;
+    }
+
+    struct InstructionAddressMap {
+        srcloc: u32 : 32;
+        code_offset: u64 : 64;
+        code_len: u64 : 64;
+    }
+
+    struct FunctionAddressMapLocation {
+        start_srcloc: u32 : 32;
+        end_srcloc: u32 : 32;
+        body_offset: u64 : 64;
+        body_len: u64 : 64;
+    }
+
+    archive FunctionAddressMap {
+        instructions: vector< InstructionAddressMap >;
+        loc: FunctionAddressMapLocation;
+    }
+
+    archive CompiledFunctionFrameInfo {
+        traps: vector< TrapInformation >;
+        address_map: archive FunctionAddressMap;
+    }
+}
